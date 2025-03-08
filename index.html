@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Disaster Relief DAO</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+  </head>
+  <body>
+    <h1>Disaster Relief DAO</h1>
+    <button onclick="createProposal()">Create Proposal</button>
+    <div id="proposals"></div>
+
+    <script>
+      const contractAddress = "YOUR_CONTRACT_ADDRESS"; // Replace with your contract address
+      const abi = [ /* Paste ABI from artifacts/contracts/DisasterReliefDAO.sol/DisasterReliefDAO.json */ ];
+
+      let provider, signer, contract;
+
+      async function connectWallet() {
+        provider = new ethers.BrowserProvider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        signer = await provider.getSigner();
+        contract = new ethers.Contract(contractAddress, abi, signer);
+      }
+
+      async function createProposal() {
+        await connectWallet();
+        const tx = await contract.propose(
+          ["0x"], // Targets (dummy address)
+          [0],     // Values (0 ETH)
+          ["0x"], // Calldata (empty)
+          "Send supplies to flood victims" // Description
+        );
+        await tx.wait();
+        alert("Proposal created!");
+      }
+
+      // Load proposals on page load
+      window.onload = async () => {
+        await connectWallet();
+        // Add code to fetch proposals here
+      };
+    </script>
+  </body>
+</html>
